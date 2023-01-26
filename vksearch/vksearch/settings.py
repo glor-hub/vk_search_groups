@@ -101,7 +101,7 @@ DATABASES = {
 #         'PASSWORD': os.getenv('DB_PASSWORD'),
 #         # 'CONN_MAX_AGE': 3
 #     }
-}
+# }
 
 
 # Password validation
