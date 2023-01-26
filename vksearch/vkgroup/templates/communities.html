@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col p-2">
+            {% if user.is_anonymous %}
+            <h6>Login To Account</h6>
+            <h5><a href="{% url 'siteauth:login' %}">
+                <button class="btn btn-success">Login</button>
+            </a></h5>
+            <h5>New At site? Register Now!</h5>
+
+            <h5><a href="{% url 'siteauth:signup' %}">
+                <button class="btn btn-success">Signup</button>
+                {% else %}
+                <h5>Audience Targeting Options</h5>
+                <br>
+                <form method="get" action="{% url 'vkgroup:search' %}">
+                    {{ form.as_p }}
+                    <p><input type="submit" class="table-success" value="Search"></p>
+                    {% csrf_token %}
+                </form>
+                {% endif %}
+
+        </div>
+
+
+        <div class="col p-8">
+            <h5>
+                Target Audiences
+            </h5>
+             {% if communities %}
+                {% include "paginator.html" with page_obj=communities %}
+                 {% endif %}
+            <table class="table table-bordered ">
+                <thead class="table-success">
+                <tr>
+                    <th scope="row" class="text-center">Id</th>
+                    <th scope="row" class="text-center">Name</th>
+                    <th scope="row" class="text-center">Members</th>
+<!--                    <th scope="row" class="text-center">Sex, %</th>-->
+                    <th scope="row" class="text-center">Audience</th>
+                    <th scope="row" class="text-center">Audience, %</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if communities %}
+                {% for c in communities %}
+                <tr>
+                    <td class="text-center align-middle">{{c.pk}}</td>
+                    <td class="text-center align-left">{{c.name}}</td>
+                    <td class="text-center align-middle">{{c.members}}</td>
+<!--                    <td class="text-center align-middle">{{c.sex_perc}}</td>-->
+                    <td class="text-center align-middle">{{c.audience_sum }}</td>
+                    <td class="text-center align-middle">{{c.audience_perc}}</td>
+                    {% endfor %}
+                    {% else %}
+                    <td class="text-center align-middle"></td>
+                    <td class="text-center align-left">No Audiences </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

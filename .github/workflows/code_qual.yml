@@ -1,0 +1,43 @@
+name: Code_quality
+
+on: [push]
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.1.13
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+    - name: Install deps and activate virt
+      if: steps.cache-deps.cache-hit != 'true'
+      run:
+        poetry install --no-interaction
+    - name: Activate virt
+      run:
+        source .venv/bin/activate
+    - name: Run black
+      run:
+        poetry run black .
+    - name: Run flake8
+      run:
+        poetry run flake8 .
+    - name: Run mypy
+      run: |
+        cd vksearch
+        poetry run mypy --strict-optional -p vksearch
+    - name: Run isort
+      run:
+        poetry run isort .
